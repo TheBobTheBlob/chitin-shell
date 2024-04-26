@@ -85,7 +85,7 @@ Live edit a file in the shell
 file edit [file_name]
 ```
 
-Running the command above will show some information about the file, a preview of lines around the selected line, and an input. The currently selected line is showen using a exclamation mark `!`, and the user input is denoted using an angle bracket `>`.
+Running the command above will show some information about the file, a preview of lines around the selected line, and an input. The currently selected line is shown using a exclamation mark `!`, and the user input is denoted using an angle bracket `>`.
 
 ```shell
 Editing line 1 of 3 in file "file.txt"
@@ -106,7 +106,7 @@ Entering text and pressing enter will replace the selected line with the text. T
 - `:save` or `:s` - Save the changes to the file to disk
 - `:exit` or `:e` - Exit the file editor
 
-### Folders
+### Folder
 
 Move to the parent folder
 
@@ -128,7 +128,7 @@ folder list
 
 ### Math
 
-Add, subtract, multiply, or divide two numbers.
+Add, subtract, multiply, or divide two numbers
 
 ```shell
 math add [num1] [num2]

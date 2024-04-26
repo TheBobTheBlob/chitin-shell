@@ -36,7 +36,7 @@ fn main() {
                     "string" => cmd_return = commands::string::cmd_main(cmd),
                     "syscmd" => cmd_return = commands::syscmd::cmd_main(cmd),
                     "math" => cmd_return = commands::math::cmd_main(cmd),
-                    "help" => cmd_return = commands::help::cmd_main(),
+                    "help" => cmd_return = commands::help::cmd_main(cmd),
                     _ => {
                         println!("\"{}\" not recognised", cmd[0]);
                         continue 'main;
