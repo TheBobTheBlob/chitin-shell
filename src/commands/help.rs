@@ -16,6 +16,7 @@ pub fn cmd_main(cmd: Vec<String>) -> Result<String, String> {
         "math" => return math(cmd),
         "string" => return string(cmd),
         "syscmd" => return syscmd(),
+        "exit" => return exit(),
         _ => return Err(format!("\"{}\" is not a recognised command", cmd[1])),
     }
 }
@@ -188,4 +189,12 @@ fn syscmd() -> Result<String, String> {
                             syscmd  [cmd] {args1} {arg2} ...";
 
     return Ok(SYSCMD_BASE.to_string());
+}
+
+fn exit() -> Result<String, String> {
+    const EXIT_BASE: &str = "exit: exit the shell\n\n\
+                            Commands:\n\
+                            exit";
+
+    return Ok(EXIT_BASE.to_string());
 }

@@ -168,3 +168,11 @@ syscmd [cmd] {args1} {arg2} ...
 ```
 
 The arguments of the command should be given as separate parameters, and not as a single string. For example, `"ls -la"` will try to run a command named "la -la".
+
+### Exit
+
+Exit the shell
+
+```shell
+exit
+```
