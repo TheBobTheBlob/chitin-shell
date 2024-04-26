@@ -10,6 +10,8 @@ fn main() {
 
     print!("\x1B[2J\x1B[1;1H"); // set output to top of terminal
 
+    println!("chitin shell: version 1.0.0\n");
+
     'main: loop {
         cmds = input();
 
