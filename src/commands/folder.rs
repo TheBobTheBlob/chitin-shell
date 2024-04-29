@@ -2,7 +2,6 @@ use chrono;
 use std::env;
 use std::fs;
 use std::path::PathBuf;
-use std::process;
 
 pub fn cmd_main(cmd: Vec<String>) -> Result<String, String> {
     let cwd = match std::env::current_dir() {
@@ -20,6 +19,8 @@ pub fn cmd_main(cmd: Vec<String>) -> Result<String, String> {
         "up" => return up(cwd),
         "list" => return list(cwd),
         "down" => return down(cwd, cmd),
+        "create" => return create(cmd),
+        "delete" => return delete(cmd),
         _ => {
             return Err(format!(
                 "\"{}\" is not a valid subcommand for folder",
@@ -29,18 +30,13 @@ pub fn cmd_main(cmd: Vec<String>) -> Result<String, String> {
     }
 }
 
-fn folder_contents(cwd: &PathBuf) -> std::fs::ReadDir {
+fn folder_contents(cwd: &PathBuf) -> Result<std::fs::ReadDir, String> {
     let paths_result = fs::read_dir(cwd);
 
-    let paths = match paths_result {
-        Ok(value) => value,
-        Err(value) => {
-            println!("Cannot access current folder: {}", value);
-            process::exit(1);
-        }
+    let _ = match paths_result {
+        Ok(value) => return Ok(value),
+        Err(value) => return Err(format!("Cannot access current folder: {}", value)),
     };
-
-    paths
 }
 
 fn up(cwd: PathBuf) -> Result<String, String> {
@@ -56,7 +52,7 @@ fn up(cwd: PathBuf) -> Result<String, String> {
 }
 
 fn list(cwd: PathBuf) -> Result<String, String> {
-    let paths = folder_contents(&cwd);
+    let paths = folder_contents(&cwd)?;
     let mut folder_contents = String::from("TYPE      SIZE  READONLY  LAST MODIFIED        NAME\n");
 
     for path_result in paths {
@@ -134,8 +130,8 @@ fn list(cwd: PathBuf) -> Result<String, String> {
 }
 
 fn down(cwd: PathBuf, cmd: Vec<String>) -> Result<String, String> {
-    let mut paths = folder_contents(&cwd);
-    let path_num = folder_contents(&cwd).count();
+    let mut paths = folder_contents(&cwd)?;
+    let path_num = folder_contents(&cwd)?.count();
 
     if path_num == 0 {
         return Err("The current folder has no subfolders".to_string());
@@ -168,4 +164,26 @@ fn down(cwd: PathBuf, cmd: Vec<String>) -> Result<String, String> {
     } else {
         return Err("\"folder down\" takes one parameter".to_string());
     }
+}
+
+fn create(cmd: Vec<String>) -> Result<String, String> {
+    if cmd.len() != 3 {
+        return Err("\"folder create\" requires one parameter".to_string());
+    }
+
+    let _ = match fs::create_dir_all(&cmd[2]) {
+        Ok(_) => return Ok("".to_string()),
+        Err(_) => return Err(format!("Cannot create folder \"{}\"", cmd[2])),
+    };
+}
+
+fn delete(cmd: Vec<String>) -> Result<String, String> {
+    if cmd.len() != 3 {
+        return Err("\"folder delete\" requires one parameter".to_string());
+    }
+
+    let _ = match fs::remove_dir_all(&cmd[2]) {
+        Ok(_) => return Ok("".to_string()),
+        Err(_) => return Err(format!("Cannot delete folder \"{}\"", cmd[2])),
+    };
 }

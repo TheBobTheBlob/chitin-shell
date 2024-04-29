@@ -33,6 +33,9 @@ fn file(cmd: Vec<String>) -> Result<String, String> {
     const FILE_CREATE: &str = "file create [file_name]\n\n\
                             Create a file with the given file name";
 
+    const FILE_DELETE: &str = "file delete [file_name]\n\n\
+                            Delete the file with the given file name";
+
     const FILE_READ: &str = "file read [file_name]\n\n\
                             Read the contents of a file";
 
@@ -63,6 +66,7 @@ fn file(cmd: Vec<String>) -> Result<String, String> {
 
     match cmd[2].as_str() {
         "create" => return Ok(FILE_CREATE.to_string()),
+        "delete" => return Ok(FILE_DELETE.to_string()),
         "read" => return Ok(FILE_READ.to_string()),
         "write" => return Ok(FILE_WRITE.to_string()),
         "append" => return Ok(FILE_APPEND.to_string()),
@@ -88,6 +92,12 @@ fn folder(cmd: Vec<String>) -> Result<String, String> {
     const FOLDER_LIST: &str = "folder list\n\n\
                             List the contents of the current folder";
 
+    const FOLDER_CREATE: &str = "folder create [folder_name]\n\n\
+                            Create an empty folder";
+
+    const FOLDER_DELETE: &str = "folder delete [folder_name]\n\n\
+                            Delete a folder and all its contents";
+
     if cmd.len() == 2 {
         return Ok(FOLDER_BASE.to_string());
     }
@@ -96,6 +106,8 @@ fn folder(cmd: Vec<String>) -> Result<String, String> {
         "up" => return Ok(FOLDER_UP.to_string()),
         "down" => return Ok(FOLDER_DOWN.to_string()),
         "list" => return Ok(FOLDER_LIST.to_string()),
+        "create" => return Ok(FOLDER_CREATE.to_string()),
+        "delete" => return Ok(FOLDER_DELETE.to_string()),
         _ => return Err(format!("\"{}\" is not a subcommand for file", cmd[2])),
     }
 }

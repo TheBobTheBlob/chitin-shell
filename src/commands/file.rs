@@ -1,6 +1,5 @@
-use std::fs::File;
-use std::io;
-use std::io::{Read, Write};
+use std::fs;
+use std::io::{self, Read, Write};
 
 pub fn cmd_main(cmd: Vec<String>) -> Result<String, String> {
     if cmd.len() == 1 {
@@ -9,6 +8,7 @@ pub fn cmd_main(cmd: Vec<String>) -> Result<String, String> {
 
     match cmd[1].as_str() {
         "create" => return create(cmd),
+        "delete" => return delete(cmd),
         "read" => return read(cmd),
         "write" => return write(cmd),
         "append" => return append(cmd),
@@ -22,9 +22,20 @@ fn create(cmd: Vec<String>) -> Result<String, String> {
         return Err("\"file create\" requires one parameter".to_string());
     }
 
-    match File::create(&cmd[2]) {
+    match fs::File::create(&cmd[2]) {
         Ok(_) => return Ok("".to_string()),
         Err(_) => return Err(format!("Could not create file \"{}\"", cmd[2])),
+    }
+}
+
+fn delete(cmd: Vec<String>) -> Result<String, String> {
+    if cmd.len() != 3 {
+        return Err("\"file delete\" requires one parameter".to_string());
+    }
+
+    match fs::remove_file(&cmd[2]) {
+        Ok(_) => return Ok("".to_string()),
+        Err(_) => return Err(format!("Could not delete file \"{}\"", cmd[2])),
     }
 }
 
@@ -33,7 +44,7 @@ fn read(cmd: Vec<String>) -> Result<String, String> {
         return Err("\"file read\" requires one parameter".to_string());
     }
 
-    let mut file = match File::open(&cmd[2]) {
+    let mut file = match fs::File::open(&cmd[2]) {
         Ok(value) => value,
         Err(_) => return Err(format!("File \"{}\" does not exist", cmd[2])),
     };
@@ -49,7 +60,7 @@ fn write(cmd: Vec<String>) -> Result<String, String> {
         return Err("\"file write\" requires two parameters".to_string());
     }
 
-    let mut file = match File::options().write(true).truncate(true).open(&cmd[2]) {
+    let mut file = match fs::File::options().write(true).truncate(true).open(&cmd[2]) {
         Ok(value) => value,
         Err(_) => return Err(format!("File \"{}\" does not exist", cmd[2])),
     };
@@ -67,7 +78,7 @@ fn append(cmd: Vec<String>) -> Result<String, String> {
         return Err("\"file append\" requires two parameters".to_string());
     }
 
-    let mut file = match File::options().append(true).open(&cmd[2]) {
+    let mut file = match fs::File::options().append(true).open(&cmd[2]) {
         Ok(value) => value,
         Err(_) => return Err(format!("File \"{}\" does not exist", cmd[2])),
     };
@@ -85,7 +96,7 @@ fn edit(cmd: Vec<String>) -> Result<String, String> {
         return Err("\"file edit\" requires one parameter".to_string());
     }
 
-    let mut file = match File::open(&cmd[2]) {
+    let mut file = match fs::File::open(&cmd[2]) {
         Ok(value) => value,
         Err(_) => return Err(format!("File \"{}\" does not exist", cmd[2])),
     };
@@ -176,7 +187,7 @@ fn edit(cmd: Vec<String>) -> Result<String, String> {
             }
             ":exit" | ":e" => break,
             ":save" | ":s" => {
-                let mut file = match File::options().write(true).truncate(true).open(&cmd[2]) {
+                let mut file = match fs::File::options().write(true).truncate(true).open(&cmd[2]) {
                     Ok(value) => value,
                     Err(_) => return Err(format!("File \"{}\" does not exist", cmd[2])),
                 };
