@@ -16,6 +16,7 @@ pub fn cmd_main(cmd: Vec<String>) -> Result<String, String> {
         "math" => return math(cmd),
         "string" => return string(cmd),
         "syscmd" => return syscmd(),
+        "if" => return whether(),
         "exit" => return exit(),
         _ => return Err(format!("\"{}\" is not a recognised command", cmd[1])),
     }
@@ -183,6 +184,12 @@ fn string(cmd: Vec<String>) -> Result<String, String> {
     const STRING_REPLACE: &str = "string replace [text] [string_to_replace] [replacement_text]\n\n\
                             Replace all occurances of a string in some text";
 
+    const STRING_COMPARE: &str = "string compare [text1] [text2]\n\n\
+                            Returns \"True\" if text1 and text2 are the same, or \"False\" otherwise";
+
+    const STRING_INCLUDES: &str = "string compare [text1] [text2]\n\n\
+                            Returns \"True\" if text1 contains text2, or \"False\" otherwise";
+
     if cmd.len() == 2 {
         return Ok(STRING_BASE.to_string());
     }
@@ -190,6 +197,8 @@ fn string(cmd: Vec<String>) -> Result<String, String> {
     match cmd[2].as_str() {
         "create" => return Ok(STRING_CREATE.to_string()),
         "replace" => return Ok(STRING_REPLACE.to_string()),
+        "compare" => return Ok(STRING_COMPARE.to_string()),
+        "includes" => return Ok(STRING_INCLUDES.to_string()),
         _ => return Err(format!("\"{}\" is not a subcommand for file", cmd[2])),
     }
 }
@@ -201,6 +210,16 @@ fn syscmd() -> Result<String, String> {
                             syscmd  [cmd] {args1} {arg2} ...";
 
     return Ok(SYSCMD_BASE.to_string());
+}
+
+fn whether() -> Result<String, String> {
+    const IF_BASE: &str = "if: Continue or stop a command chain\n\n\
+                            If given the positive boolean \"True\" will let the rest of the command chain continue\n\
+                            If given the negative boolean \"False\" will terminate the command chain\n\n\
+                            Commands:\n\
+                            if  [boolean]";
+
+    return Ok(IF_BASE.to_string());
 }
 
 fn exit() -> Result<String, String> {

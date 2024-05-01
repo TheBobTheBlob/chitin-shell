@@ -178,6 +178,18 @@ Replace all occurances of a string in some text
 string replace [text] [string_to_replace] [replacement_text]
 ```
 
+Returns "True" if text1 and text2 are the same, or "False" otherwise
+
+```console
+string compare [text1] [text2]
+```
+
+Returns "True" if text1 contains text2, or "False" otherwise
+
+```console
+string includes [text1] [text2]
+```
+
 ### Syscmd
 
 Send a command to the shell of the operating system. Some commands, like switching directories, may not work.
@@ -187,6 +199,20 @@ syscmd [cmd] {args1} {arg2} ...
 ```
 
 The arguments of the command should be given as separate parameters, and not as a single string. For example, `"ls -la"` will try to run a command named "la -la".
+
+### If
+
+```console
+if [boolean]
+```
+
+If given the positive boolean "True" will let the rest of the command chain continue. If given the negative boolean "False" will terminate the command chain.
+
+```console
+file read text.txt | string includes %str "Hello" | if %str | string create "Contains Hello"
+```
+
+For example, the command chain above will print out `Contains Hello` if the file contains "Hello", or does not put output anything otherwise.
 
 ### Exit
 
