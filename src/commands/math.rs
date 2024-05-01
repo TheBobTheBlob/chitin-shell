@@ -6,6 +6,7 @@ pub fn cmd_main(cmd: Vec<String>) -> Result<String, String> {
     match cmd[1].as_str() {
         "add" | "subtract" | "multiply" | "divide" => return elementary(cmd),
         "sin" | "cos" | "tan" => return trig(cmd),
+        "greater" | "less" | "equal" => return compare(cmd),
         _ => return Err(format!("\"{}\" is not a valid subcommand for math", cmd[1])),
     }
 }
@@ -23,7 +24,6 @@ fn elementary(cmd: Vec<String>) -> Result<String, String> {
     }
 
     let num1 = str_to_float(&cmd[2])?;
-
     let num2 = str_to_float(&cmd[3])?;
 
     if cmd[1] == "divide" && cmd[3] == "0" {
@@ -68,5 +68,39 @@ fn trig(cmd: Vec<String>) -> Result<String, String> {
                 cmd[1]
             ))
         }
+    }
+}
+
+fn compare(cmd: Vec<String>) -> Result<String, String> {
+    if cmd.len() != 4 {
+        return Err(format!("\"math {}\" requires two parameters", cmd[1]));
+    }
+
+    let num1 = str_to_float(&cmd[2])?;
+    let num2 = str_to_float(&cmd[3])?;
+
+    match cmd[1].as_str() {
+        "greater" => {
+            if num1 > num2 {
+                return Ok("True".to_string());
+            } else {
+                return Ok("False".to_string());
+            }
+        }
+        "less" => {
+            if num1 < num2 {
+                return Ok("True".to_string());
+            } else {
+                return Ok("False".to_string());
+            }
+        }
+        "equal" => {
+            if num1 == num2 {
+                return Ok("True".to_string());
+            } else {
+                return Ok("False".to_string());
+            }
+        }
+        _ => unreachable!(),
     }
 }

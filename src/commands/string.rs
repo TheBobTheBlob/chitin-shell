@@ -1,5 +1,3 @@
-// use regex;
-
 pub fn cmd_main(cmd: Vec<String>) -> Result<String, String> {
     if cmd.len() == 1 {
         return Err(

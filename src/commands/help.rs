@@ -16,7 +16,7 @@ pub fn cmd_main(cmd: Vec<String>) -> Result<String, String> {
         "math" => return math(cmd),
         "string" => return string(cmd),
         "syscmd" => return syscmd(),
-        "if" => return whether(),
+        "if" => return whether(cmd),
         "exit" => return exit(),
         _ => return Err(format!("\"{}\" is not a recognised command", cmd[1])),
     }
@@ -109,7 +109,7 @@ fn folder(cmd: Vec<String>) -> Result<String, String> {
         "list" => return Ok(FOLDER_LIST.to_string()),
         "create" => return Ok(FOLDER_CREATE.to_string()),
         "delete" => return Ok(FOLDER_DELETE.to_string()),
-        _ => return Err(format!("\"{}\" is not a subcommand for file", cmd[2])),
+        _ => return Err(format!("\"{}\" is not a subcommand for folder", cmd[2])),
     }
 }
 
@@ -130,7 +130,10 @@ fn math(cmd: Vec<String>) -> Result<String, String> {
                             math divide [num1] [num2]\n\
                             math sin [number] [type]\n\
                             math cos [number] [type]\n\
-                            math tan [number] [type]";
+                            math tan [number] [type]\n\
+                            math greater [num1] [num2]\n\
+                            math less [num1] [num2]\n\
+                            math equal [num1] [num2]";
 
     const MATH_ADD: &str = "math add [num1] [num2]\n\n\
                             Adds the two numbers together";
@@ -156,6 +159,15 @@ fn math(cmd: Vec<String>) -> Result<String, String> {
                             Find the tangent of a value. \
                             The type can either be `degree` or `radian`.";
 
+    const MATH_GREATER: &str = "math greater [num1] [num2]\n\n\
+                            Returns \"True\" if num1 is greater than num2, or \"False\" otherwise";
+
+    const MATH_LESS: &str = "math less [num1] [num2]\n\n\
+                            Returns \"True\" if num1 is less than num2, or \"False\" otherwise";
+
+    const MATH_EQUAL: &str = "math equal [num1] [num2]\n\n\
+                            Returns \"True\" if num1 is equal to num2, or \"False\" otherwise";
+
     if cmd.len() == 2 {
         return Ok(MATH_BASE.to_string());
     }
@@ -168,7 +180,10 @@ fn math(cmd: Vec<String>) -> Result<String, String> {
         "sin" => return Ok(MATH_SIN.to_string()),
         "cos" => return Ok(MATH_COS.to_string()),
         "tan" => return Ok(MATH_TAN.to_string()),
-        _ => return Err(format!("\"{}\" is not a subcommand for file", cmd[2])),
+        "greater" => return Ok(MATH_GREATER.to_string()),
+        "less" => return Ok(MATH_LESS.to_string()),
+        "equal" => return Ok(MATH_EQUAL.to_string()),
+        _ => return Err(format!("\"{}\" is not a subcommand for math", cmd[2])),
     }
 }
 
@@ -199,7 +214,7 @@ fn string(cmd: Vec<String>) -> Result<String, String> {
         "replace" => return Ok(STRING_REPLACE.to_string()),
         "compare" => return Ok(STRING_COMPARE.to_string()),
         "includes" => return Ok(STRING_INCLUDES.to_string()),
-        _ => return Err(format!("\"{}\" is not a subcommand for file", cmd[2])),
+        _ => return Err(format!("\"{}\" is not a subcommand for string", cmd[2])),
     }
 }
 
@@ -207,19 +222,33 @@ fn syscmd() -> Result<String, String> {
     const SYSCMD_BASE: &str = "syscmd: Send a command to the shell of the operating system\n\n\
                             Some commands, like switching directories, may not work.\n\n\
                             Commands:\n\
-                            syscmd  [cmd] {args1} {arg2} ...";
+                            syscmd [cmd] {args1} {arg2} ...";
 
     return Ok(SYSCMD_BASE.to_string());
 }
 
-fn whether() -> Result<String, String> {
+fn whether(cmd: Vec<String>) -> Result<String, String> {
     const IF_BASE: &str = "if: Continue or stop a command chain\n\n\
-                            If given the positive boolean \"True\" will let the rest of the command chain continue\n\
-                            If given the negative boolean \"False\" will terminate the command chain\n\n\
+                            Will decide on whether to continue the current command chain based on the boolean value\n\n\
                             Commands:\n\
-                            if  [boolean]";
+                            if true [boolean]\n\
+                            if false [boolean]";
 
-    return Ok(IF_BASE.to_string());
+    const IF_TRUE: &str = "if true [boolean]\n\n\
+                            Continues the command chain if the boolean is equal to \"True\"";
+
+    const IF_FALSE: &str = "if false [boolean]\n\n\
+                            Continues the command chain if the boolean is equal to \"False\"";
+
+    if cmd.len() == 2 {
+        return Ok(IF_BASE.to_string());
+    }
+
+    match cmd[2].as_str() {
+        "true" => return Ok(IF_TRUE.to_string()),
+        "false" => return Ok(IF_FALSE.to_string()),
+        _ => return Err(format!("\"{}\" is not a subcommand for if", cmd[2])),
+    }
 }
 
 fn exit() -> Result<String, String> {
