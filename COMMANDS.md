@@ -19,6 +19,12 @@ Create a file with the given file name
 file create [file_name]
 ```
 
+Rename the file old_name into new_name
+
+```console
+file rename [old_name] [new_name]
+```
+
 Delete the file with the given file name
 
 ```console
@@ -70,12 +76,14 @@ Entering text and pressing enter will replace the selected line with the text. T
 - `:save` or `:s` - Save the changes to the file to disk
 - `:exit` or `:e` - Exit the file editor
 
+Placing a backwards slash `\` before a command will let you enter it as text
+
 ## Folder
 
-Move to the parent folder
+Move to the parent folder. If folder_name is given, the command will move to the highest level with that name.
 
 ```console
-folder up
+folder up {folder_name}
 ```
 
 Move to a child folder. If no folder is given and there is only one child folder, that will automatically be selected.
@@ -94,6 +102,12 @@ Create a folder with the given name
 
 ```console
 folder create [folder_name]
+```
+
+Rename the folder old_name into new_name
+
+```console
+folder rename [old_name] [new_name]
 ```
 
 Delete a folder and all its contents
@@ -153,6 +167,12 @@ Returns "True" if text1 contains text2, or "False" otherwise
 
 ```console
 string includes [text1] [text2]
+```
+
+Filters every line in a multiline string depending on if they contain text
+
+```console
+string filter [multiline] [text]
 ```
 
 ## Syscmd

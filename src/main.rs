@@ -39,7 +39,7 @@ fn main() {
                     "if" => cmd_return = commands::whether::cmd_main(cmd),
                     "help" => cmd_return = commands::help::cmd_main(cmd),
                     _ => {
-                        println!("\"{}\" not recognised", cmd[0]);
+                        println!("\"{}\" not a recognised command", cmd[0]);
                         continue 'main;
                     }
                 }

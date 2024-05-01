@@ -16,10 +16,11 @@ pub fn cmd_main(cmd: Vec<String>) -> Result<String, String> {
     }
 
     match cmd[1].as_str() {
-        "up" => return up(cwd),
+        "up" => return up(cwd, cmd),
         "list" => return list(cwd),
         "down" => return down(cwd, cmd),
         "create" => return create(cmd),
+        "rename" => return rename(cmd),
         "delete" => return delete(cmd),
         _ => {
             return Err(format!(
@@ -39,11 +40,22 @@ fn folder_contents(cwd: &PathBuf) -> Result<std::fs::ReadDir, String> {
     };
 }
 
-fn up(cwd: PathBuf) -> Result<String, String> {
-    let parent_dir = match cwd.parent() {
-        None => cwd,
-        Some(value) => PathBuf::from(value),
-    };
+fn up(cwd: PathBuf, cmd: Vec<String>) -> Result<String, String> {
+    let parent_dir;
+
+    if cmd.len() == 3 {
+        parent_dir = match cwd.display().to_string().split_once(&cmd[2]) {
+            Some(value) => PathBuf::from(format!("{}/{}", value.0, cmd[2])),
+            None => cwd,
+        }
+    } else if cmd.len() == 2 {
+        parent_dir = match cwd.parent() {
+            None => cwd,
+            Some(value) => PathBuf::from(value),
+        };
+    } else {
+        return Err("\"folder up\" only takes one optional parameter".to_string());
+    }
 
     match env::set_current_dir(parent_dir) {
         Ok(_) => return Ok("".to_string()),
@@ -175,6 +187,17 @@ fn create(cmd: Vec<String>) -> Result<String, String> {
         Ok(_) => return Ok("".to_string()),
         Err(_) => return Err(format!("Cannot create folder \"{}\"", cmd[2])),
     };
+}
+
+fn rename(cmd: Vec<String>) -> Result<String, String> {
+    if cmd.len() != 4 {
+        return Err("\"folder rename\" requires two parameters".to_string());
+    }
+
+    match fs::rename(&cmd[2], &cmd[3]) {
+        Ok(_) => return Ok("".to_string()),
+        Err(_) => return Err(format!("Could not rename folder \"{}\"", cmd[2])),
+    }
 }
 
 fn delete(cmd: Vec<String>) -> Result<String, String> {

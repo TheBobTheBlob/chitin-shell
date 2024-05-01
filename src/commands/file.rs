@@ -8,6 +8,7 @@ pub fn cmd_main(cmd: Vec<String>) -> Result<String, String> {
 
     match cmd[1].as_str() {
         "create" => return create(cmd),
+        "rename" => return rename(cmd),
         "delete" => return delete(cmd),
         "read" => return read(cmd),
         "write" => return write(cmd),
@@ -25,6 +26,17 @@ fn create(cmd: Vec<String>) -> Result<String, String> {
     match fs::File::create(&cmd[2]) {
         Ok(_) => return Ok("".to_string()),
         Err(_) => return Err(format!("Could not create file \"{}\"", cmd[2])),
+    }
+}
+
+fn rename(cmd: Vec<String>) -> Result<String, String> {
+    if cmd.len() != 4 {
+        return Err("\"file rename\" requires two parameters".to_string());
+    }
+
+    match fs::rename(&cmd[2], &cmd[3]) {
+        Ok(_) => return Ok("".to_string()),
+        Err(_) => return Err(format!("Could not rename file \"{}\"", cmd[2])),
     }
 }
 
@@ -92,6 +104,9 @@ fn append(cmd: Vec<String>) -> Result<String, String> {
 }
 
 fn edit(cmd: Vec<String>) -> Result<String, String> {
+    const FILE_LINES: usize = 19; // Should be odd
+    const MAX_SURROUND_LINES: usize = (FILE_LINES - 1) / 2;
+
     if cmd.len() != 3 {
         return Err("\"file edit\" requires one parameter".to_string());
     }
@@ -124,18 +139,16 @@ fn edit(cmd: Vec<String>) -> Result<String, String> {
                 )
             );
 
-            match lines.len() - selected_line {
-                0 => print_before = 6,
-                1 => print_before = 5,
-                2 => print_before = 4,
-                _ => print_before = 3,
+            if lines.len() - selected_line <= MAX_SURROUND_LINES {
+                print_before = FILE_LINES - (lines.len() - selected_line) - 1
+            } else {
+                print_before = MAX_SURROUND_LINES
             }
 
-            match selected_line - 1 {
-                0 => print_after = 6,
-                1 => print_after = 5,
-                2 => print_after = 4,
-                _ => print_after = 3,
+            if selected_line - 1 <= MAX_SURROUND_LINES {
+                print_after = FILE_LINES - selected_line
+            } else {
+                print_after = MAX_SURROUND_LINES
             }
 
             for n in 1..selected_line {
@@ -197,7 +210,12 @@ fn edit(cmd: Vec<String>) -> Result<String, String> {
                     Err(_) => return Err(format!("File \"{}\" cannot be edited", cmd[2])),
                 };
             }
-            _ => lines[selected_line - 1] = user_input,
+            _ => {
+                if user_input.starts_with("\\") {
+                    user_input.remove(0);
+                }
+                lines[selected_line - 1] = user_input
+            }
         }
     }
 
@@ -215,5 +233,5 @@ fn file_edit_input() -> String {
         .expect("Cannot read user inpt");
 
     user_input = user_input.trim().to_string();
-    return user_input;
+    user_input
 }

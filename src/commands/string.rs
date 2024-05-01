@@ -11,6 +11,7 @@ pub fn cmd_main(cmd: Vec<String>) -> Result<String, String> {
         "replace" => return replace(cmd),
         "compare" => return compare(cmd),
         "includes" => return includes(cmd),
+        "filter" => return filter(cmd),
         _ => {
             return Err(format!(
                 "\"{}\" is not a valid subcommand for folder",
@@ -54,4 +55,18 @@ fn includes(cmd: Vec<String>) -> Result<String, String> {
     } else {
         return Ok("False".to_string());
     }
+}
+
+fn filter(cmd: Vec<String>) -> Result<String, String> {
+    if cmd.len() != 4 {
+        return Err("\"string filter\" takes two parameters".to_string());
+    }
+
+    let strings: Vec<&str> = cmd[2]
+        .split("\n")
+        .into_iter()
+        .filter(|string: &&str| string.contains(&cmd[3]))
+        .collect();
+
+    return Ok(strings.join("\n"));
 }

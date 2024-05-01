@@ -34,6 +34,9 @@ fn file(cmd: Vec<String>) -> Result<String, String> {
     const FILE_CREATE: &str = "file create [file_name]\n\n\
                             Create a file with the given file name";
 
+    const FILE_RENAME: &str = "file rename [old_name] [new_name]\n\n\
+                            Rename the file old_name into new_name";
+
     const FILE_DELETE: &str = "file delete [file_name]\n\n\
                             Delete the file with the given file name";
 
@@ -67,6 +70,7 @@ fn file(cmd: Vec<String>) -> Result<String, String> {
 
     match cmd[2].as_str() {
         "create" => return Ok(FILE_CREATE.to_string()),
+        "rename" => return Ok(FILE_RENAME.to_string()),
         "delete" => return Ok(FILE_DELETE.to_string()),
         "read" => return Ok(FILE_READ.to_string()),
         "write" => return Ok(FILE_WRITE.to_string()),
@@ -79,12 +83,16 @@ fn file(cmd: Vec<String>) -> Result<String, String> {
 fn folder(cmd: Vec<String>) -> Result<String, String> {
     const FOLDER_BASE: &str = "folder: navigate the file system\n\n\
                             Commands:\n\
-                            folder up\n\
+                            folder up {folder_name}\n\
                             folder down {folder_name}\n\
-                            folder list";
+                            folder list\n\";
+                            folder create [folder_name]\n\";
+                            folder rename [old_name] [new_name]\n\";
+                            folder delete [folder_name]";
 
     const FOLDER_UP: &str = "folder up\n\n\
-                            Move to the parent folder";
+                            Move to the parent folder. If folder_name is given, \
+                            the command will move to the highest level with that name.";
 
     const FOLDER_DOWN: &str = "folder down {folder_name}\n\n\
                             Move to a child folder. If no folder is given and there is \
@@ -95,6 +103,9 @@ fn folder(cmd: Vec<String>) -> Result<String, String> {
 
     const FOLDER_CREATE: &str = "folder create [folder_name]\n\n\
                             Create an empty folder";
+
+    const FOLDER_RENAME: &str = "folder rename [old_name] [new_name]\n\n\
+                                Rename the folder old_name into new_name";
 
     const FOLDER_DELETE: &str = "folder delete [folder_name]\n\n\
                             Delete a folder and all its contents";
@@ -108,6 +119,7 @@ fn folder(cmd: Vec<String>) -> Result<String, String> {
         "down" => return Ok(FOLDER_DOWN.to_string()),
         "list" => return Ok(FOLDER_LIST.to_string()),
         "create" => return Ok(FOLDER_CREATE.to_string()),
+        "rename" => return Ok(FOLDER_RENAME.to_string()),
         "delete" => return Ok(FOLDER_DELETE.to_string()),
         _ => return Err(format!("\"{}\" is not a subcommand for folder", cmd[2])),
     }
@@ -191,7 +203,10 @@ fn string(cmd: Vec<String>) -> Result<String, String> {
     const STRING_BASE: &str = "string: Manipulate strings\n\n\
                             Commands:\n\
                             string create [text]\n\
-                            string replace [text] [string_to_replace] [replacement_text]";
+                            string replace [text] [string_to_replace] [replacement_text]\n\";
+                            string compare [text] [string_to_replace] [replacement_text]\n\";
+                            string includes [text1] [text2]\n\";
+                            string filter [multiline] [text]";
 
     const STRING_CREATE: &str = "string create [text]\n\n\
                             Enter a string into the shell to use with piping";
@@ -202,8 +217,11 @@ fn string(cmd: Vec<String>) -> Result<String, String> {
     const STRING_COMPARE: &str = "string compare [text1] [text2]\n\n\
                             Returns \"True\" if text1 and text2 are the same, or \"False\" otherwise";
 
-    const STRING_INCLUDES: &str = "string compare [text1] [text2]\n\n\
+    const STRING_INCLUDES: &str = "string includes [text1] [text2]\n\n\
                             Returns \"True\" if text1 contains text2, or \"False\" otherwise";
+
+    const STRING_FILTER: &str = "string filter [multiline] [text]\n\n\
+                            Filters every line in a multiline string depending on if they contain text";
 
     if cmd.len() == 2 {
         return Ok(STRING_BASE.to_string());
@@ -214,6 +232,7 @@ fn string(cmd: Vec<String>) -> Result<String, String> {
         "replace" => return Ok(STRING_REPLACE.to_string()),
         "compare" => return Ok(STRING_COMPARE.to_string()),
         "includes" => return Ok(STRING_INCLUDES.to_string()),
+        "filter" => return Ok(STRING_FILTER.to_string()),
         _ => return Err(format!("\"{}\" is not a subcommand for string", cmd[2])),
     }
 }
