@@ -12,12 +12,10 @@ pub fn cmd_main(cmd: Vec<String>) -> Result<String, String> {
         "compare" => compare(cmd),
         "includes" => includes(cmd),
         "filter" => filter(cmd),
-        _ => {
-            Err(format!(
-                "\"{}\" is not a valid subcommand for folder",
-                cmd[1]
-            ))
-        }
+        _ => Err(format!(
+            "\"{}\" is not a valid subcommand for folder",
+            cmd[1]
+        )),
     }
 }
 

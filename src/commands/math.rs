@@ -62,12 +62,10 @@ fn trig(cmd: Vec<String>) -> Result<String, String> {
             "tan" => Ok(num.tan().to_string()),
             _ => unreachable!(),
         },
-        _ => {
-            Err(format!(
-                "\"math {}\" only supports \"degree\" and \"radian\"",
-                cmd[1]
-            ))
-        }
+        _ => Err(format!(
+            "\"math {}\" only supports \"degree\" and \"radian\"",
+            cmd[1]
+        )),
     }
 }
 

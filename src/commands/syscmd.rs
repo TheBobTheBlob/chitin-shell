@@ -12,9 +12,7 @@ pub fn cmd_main(cmd: Vec<String>) -> Result<String, String> {
             .args(&cmd[1..])
             .output();
     } else if cmd.len() > 3 {
-        external_call = std::process::Command::new(&cmd[1])
-            .args(&cmd[2..])
-            .output();
+        external_call = std::process::Command::new(&cmd[1]).args(&cmd[2..]).output();
     } else {
         external_call = std::process::Command::new(&cmd[1]).output();
     }
