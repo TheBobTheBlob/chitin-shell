@@ -16,28 +16,26 @@ pub fn cmd_main(cmd: Vec<String>) -> Result<String, String> {
     }
 
     match cmd[1].as_str() {
-        "up" => return up(cwd, cmd),
-        "list" => return list(cwd),
-        "down" => return down(cwd, cmd),
-        "create" => return create(cmd),
-        "rename" => return rename(cmd),
-        "delete" => return delete(cmd),
-        _ => {
-            return Err(format!(
-                "\"{}\" is not a valid subcommand for folder",
-                cmd[1]
-            ))
-        }
+        "up" => up(cwd, cmd),
+        "list" => list(cwd),
+        "down" => down(cwd, cmd),
+        "create" => create(cmd),
+        "rename" => rename(cmd),
+        "delete" => delete(cmd),
+        _ => Err(format!(
+            "\"{}\" is not a valid subcommand for folder",
+            cmd[1]
+        )),
     }
 }
 
 fn folder_contents(cwd: &PathBuf) -> Result<std::fs::ReadDir, String> {
     let paths_result = fs::read_dir(cwd);
 
-    let _ = match paths_result {
-        Ok(value) => return Ok(value),
-        Err(value) => return Err(format!("Cannot access current folder: {}", value)),
-    };
+    match paths_result {
+        Ok(value) => Ok(value),
+        Err(value) => Err(format!("Cannot access current folder: {}", value)),
+    }
 }
 
 fn up(cwd: PathBuf, cmd: Vec<String>) -> Result<String, String> {
@@ -58,8 +56,8 @@ fn up(cwd: PathBuf, cmd: Vec<String>) -> Result<String, String> {
     }
 
     match env::set_current_dir(parent_dir) {
-        Ok(_) => return Ok("".to_string()),
-        Err(_) => return Err("Cannot access parent folder".to_string()),
+        Ok(_) => Ok("".to_string()),
+        Err(_) => Err("Cannot access parent folder".to_string()),
     }
 }
 
@@ -107,12 +105,11 @@ fn list(cwd: PathBuf) -> Result<String, String> {
 
         // Readonly
 
-        let readonly;
-        if path.metadata().unwrap().permissions().readonly() {
-            readonly = "True ".to_string();
+        let readonly = if path.metadata().unwrap().permissions().readonly() {
+            "True ".to_string()
         } else {
-            readonly = "False".to_string();
-        }
+            "False".to_string()
+        };
 
         // Modified
 
@@ -138,7 +135,7 @@ fn list(cwd: PathBuf) -> Result<String, String> {
         }
     }
 
-    return Ok(folder_contents);
+    Ok(folder_contents)
 }
 
 fn down(cwd: PathBuf, cmd: Vec<String>) -> Result<String, String> {
@@ -161,20 +158,18 @@ fn down(cwd: PathBuf, cmd: Vec<String>) -> Result<String, String> {
             let _ = env::set_current_dir(child);
             return Ok(env::current_dir().unwrap().to_str().unwrap().to_string());
         } else {
-            return Err("There is more than one subfolder, please specifiy".to_string());
+            Err("There is more than one subfolder, please specifiy".to_string())
         }
     } else if cmd.len() == 3 {
-        match env::set_current_dir(format!("{}/{}", cwd.to_str().unwrap(), cmd[2].to_string())) {
-            Ok(_) => return Ok("".to_string()),
-            Err(_) => {
-                return Err(format!(
-                    "\"{}\" is not a subfolder of the current folder",
-                    cmd[2]
-                ))
-            }
+        match env::set_current_dir(format!("{}/{}", cwd.to_str().unwrap(), cmd[2])) {
+            Ok(_) => Ok("".to_string()),
+            Err(_) => Err(format!(
+                "\"{}\" is not a subfolder of the current folder",
+                cmd[2]
+            )),
         }
     } else {
-        return Err("\"folder down\" takes one parameter".to_string());
+        Err("\"folder down\" takes one parameter".to_string())
     }
 }
 
@@ -183,10 +178,10 @@ fn create(cmd: Vec<String>) -> Result<String, String> {
         return Err("\"folder create\" requires one parameter".to_string());
     }
 
-    let _ = match fs::create_dir_all(&cmd[2]) {
-        Ok(_) => return Ok("".to_string()),
-        Err(_) => return Err(format!("Cannot create folder \"{}\"", cmd[2])),
-    };
+    match fs::create_dir_all(&cmd[2]) {
+        Ok(_) => Ok("".to_string()),
+        Err(_) => Err(format!("Cannot create folder \"{}\"", cmd[2])),
+    }
 }
 
 fn rename(cmd: Vec<String>) -> Result<String, String> {
@@ -195,8 +190,8 @@ fn rename(cmd: Vec<String>) -> Result<String, String> {
     }
 
     match fs::rename(&cmd[2], &cmd[3]) {
-        Ok(_) => return Ok("".to_string()),
-        Err(_) => return Err(format!("Could not rename folder \"{}\"", cmd[2])),
+        Ok(_) => Ok("".to_string()),
+        Err(_) => Err(format!("Could not rename folder \"{}\"", cmd[2])),
     }
 }
 
@@ -205,8 +200,8 @@ fn delete(cmd: Vec<String>) -> Result<String, String> {
         return Err("\"folder delete\" requires one parameter".to_string());
     }
 
-    let _ = match fs::remove_dir_all(&cmd[2]) {
-        Ok(_) => return Ok("".to_string()),
-        Err(_) => return Err(format!("Cannot delete folder \"{}\"", cmd[2])),
-    };
+    match fs::remove_dir_all(&cmd[2]) {
+        Ok(_) => Ok("".to_string()),
+        Err(_) => Err(format!("Cannot delete folder \"{}\"", cmd[2])),
+    }
 }

@@ -10,15 +10,15 @@ pub fn cmd_main(cmd: Vec<String>) -> Result<String, String> {
     }
 
     match cmd[1].as_str() {
-        "file" => return file(cmd),
-        "folder" => return folder(cmd),
-        "help" => return help(),
-        "math" => return math(cmd),
-        "string" => return string(cmd),
-        "syscmd" => return syscmd(),
-        "if" => return whether(cmd),
-        "exit" => return exit(),
-        _ => return Err(format!("\"{}\" is not a recognised command", cmd[1])),
+        "file" => file(cmd),
+        "folder" => folder(cmd),
+        "help" => help(),
+        "math" => math(cmd),
+        "string" => string(cmd),
+        "syscmd" => syscmd(),
+        "if" => whether(cmd),
+        "exit" => exit(),
+        _ => Err(format!("\"{}\" is not a recognised command", cmd[1])),
     }
 }
 
@@ -69,14 +69,14 @@ fn file(cmd: Vec<String>) -> Result<String, String> {
     }
 
     match cmd[2].as_str() {
-        "create" => return Ok(FILE_CREATE.to_string()),
-        "rename" => return Ok(FILE_RENAME.to_string()),
-        "delete" => return Ok(FILE_DELETE.to_string()),
-        "read" => return Ok(FILE_READ.to_string()),
-        "write" => return Ok(FILE_WRITE.to_string()),
-        "append" => return Ok(FILE_APPEND.to_string()),
-        "edit" => return Ok(FILE_EDIT.to_string()),
-        _ => return Err(format!("\"{}\" is not a subcommand for file", cmd[2])),
+        "create" => Ok(FILE_CREATE.to_string()),
+        "rename" => Ok(FILE_RENAME.to_string()),
+        "delete" => Ok(FILE_DELETE.to_string()),
+        "read" => Ok(FILE_READ.to_string()),
+        "write" => Ok(FILE_WRITE.to_string()),
+        "append" => Ok(FILE_APPEND.to_string()),
+        "edit" => Ok(FILE_EDIT.to_string()),
+        _ => Err(format!("\"{}\" is not a subcommand for file", cmd[2])),
     }
 }
 
@@ -115,13 +115,13 @@ fn folder(cmd: Vec<String>) -> Result<String, String> {
     }
 
     match cmd[2].as_str() {
-        "up" => return Ok(FOLDER_UP.to_string()),
-        "down" => return Ok(FOLDER_DOWN.to_string()),
-        "list" => return Ok(FOLDER_LIST.to_string()),
-        "create" => return Ok(FOLDER_CREATE.to_string()),
-        "rename" => return Ok(FOLDER_RENAME.to_string()),
-        "delete" => return Ok(FOLDER_DELETE.to_string()),
-        _ => return Err(format!("\"{}\" is not a subcommand for folder", cmd[2])),
+        "up" => Ok(FOLDER_UP.to_string()),
+        "down" => Ok(FOLDER_DOWN.to_string()),
+        "list" => Ok(FOLDER_LIST.to_string()),
+        "create" => Ok(FOLDER_CREATE.to_string()),
+        "rename" => Ok(FOLDER_RENAME.to_string()),
+        "delete" => Ok(FOLDER_DELETE.to_string()),
+        _ => Err(format!("\"{}\" is not a subcommand for folder", cmd[2])),
     }
 }
 
@@ -130,7 +130,7 @@ fn help() -> Result<String, String> {
                             Commands:\n\
                             help {cmd} {subcmd}";
 
-    return Ok(HELP_BASE.to_string());
+    Ok(HELP_BASE.to_string())
 }
 
 fn math(cmd: Vec<String>) -> Result<String, String> {
@@ -185,17 +185,17 @@ fn math(cmd: Vec<String>) -> Result<String, String> {
     }
 
     match cmd[2].as_str() {
-        "add" => return Ok(MATH_ADD.to_string()),
-        "subtract" => return Ok(MATH_SUBTRACT.to_string()),
-        "multiply" => return Ok(MATH_MULTIPLY.to_string()),
-        "divide" => return Ok(MATH_DIVIDE.to_string()),
-        "sin" => return Ok(MATH_SIN.to_string()),
-        "cos" => return Ok(MATH_COS.to_string()),
-        "tan" => return Ok(MATH_TAN.to_string()),
-        "greater" => return Ok(MATH_GREATER.to_string()),
-        "less" => return Ok(MATH_LESS.to_string()),
-        "equal" => return Ok(MATH_EQUAL.to_string()),
-        _ => return Err(format!("\"{}\" is not a subcommand for math", cmd[2])),
+        "add" => Ok(MATH_ADD.to_string()),
+        "subtract" => Ok(MATH_SUBTRACT.to_string()),
+        "multiply" => Ok(MATH_MULTIPLY.to_string()),
+        "divide" => Ok(MATH_DIVIDE.to_string()),
+        "sin" => Ok(MATH_SIN.to_string()),
+        "cos" => Ok(MATH_COS.to_string()),
+        "tan" => Ok(MATH_TAN.to_string()),
+        "greater" => Ok(MATH_GREATER.to_string()),
+        "less" => Ok(MATH_LESS.to_string()),
+        "equal" => Ok(MATH_EQUAL.to_string()),
+        _ => Err(format!("\"{}\" is not a subcommand for math", cmd[2])),
     }
 }
 
@@ -228,12 +228,12 @@ fn string(cmd: Vec<String>) -> Result<String, String> {
     }
 
     match cmd[2].as_str() {
-        "create" => return Ok(STRING_CREATE.to_string()),
-        "replace" => return Ok(STRING_REPLACE.to_string()),
-        "compare" => return Ok(STRING_COMPARE.to_string()),
-        "includes" => return Ok(STRING_INCLUDES.to_string()),
-        "filter" => return Ok(STRING_FILTER.to_string()),
-        _ => return Err(format!("\"{}\" is not a subcommand for string", cmd[2])),
+        "create" => Ok(STRING_CREATE.to_string()),
+        "replace" => Ok(STRING_REPLACE.to_string()),
+        "compare" => Ok(STRING_COMPARE.to_string()),
+        "includes" => Ok(STRING_INCLUDES.to_string()),
+        "filter" => Ok(STRING_FILTER.to_string()),
+        _ => Err(format!("\"{}\" is not a subcommand for string", cmd[2])),
     }
 }
 
@@ -243,7 +243,7 @@ fn syscmd() -> Result<String, String> {
                             Commands:\n\
                             syscmd [cmd] {args1} {arg2} ...";
 
-    return Ok(SYSCMD_BASE.to_string());
+    Ok(SYSCMD_BASE.to_string())
 }
 
 fn whether(cmd: Vec<String>) -> Result<String, String> {
@@ -264,9 +264,9 @@ fn whether(cmd: Vec<String>) -> Result<String, String> {
     }
 
     match cmd[2].as_str() {
-        "true" => return Ok(IF_TRUE.to_string()),
-        "false" => return Ok(IF_FALSE.to_string()),
-        _ => return Err(format!("\"{}\" is not a subcommand for if", cmd[2])),
+        "true" => Ok(IF_TRUE.to_string()),
+        "false" => Ok(IF_FALSE.to_string()),
+        _ => Err(format!("\"{}\" is not a subcommand for if", cmd[2])),
     }
 }
 
@@ -275,5 +275,5 @@ fn exit() -> Result<String, String> {
                             Commands:\n\
                             exit";
 
-    return Ok(EXIT_BASE.to_string());
+    Ok(EXIT_BASE.to_string())
 }

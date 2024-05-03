@@ -7,14 +7,14 @@ pub fn cmd_main(cmd: Vec<String>) -> Result<String, String> {
     }
 
     match cmd[1].as_str() {
-        "create" => return create(cmd),
-        "rename" => return rename(cmd),
-        "delete" => return delete(cmd),
-        "read" => return read(cmd),
-        "write" => return write(cmd),
-        "append" => return append(cmd),
-        "edit" => return edit(cmd),
-        _ => return Err(format!("\"{}\" is not a valid subcommand for file", cmd[1])),
+        "create" => create(cmd),
+        "rename" => rename(cmd),
+        "delete" => delete(cmd),
+        "read" => read(cmd),
+        "write" => write(cmd),
+        "append" => append(cmd),
+        "edit" => edit(cmd),
+        _ => Err(format!("\"{}\" is not a valid subcommand for file", cmd[1])),
     }
 }
 
@@ -24,8 +24,8 @@ fn create(cmd: Vec<String>) -> Result<String, String> {
     }
 
     match fs::File::create(&cmd[2]) {
-        Ok(_) => return Ok("".to_string()),
-        Err(_) => return Err(format!("Could not create file \"{}\"", cmd[2])),
+        Ok(_) => Ok("".to_string()),
+        Err(_) => Err(format!("Could not create file \"{}\"", cmd[2])),
     }
 }
 
@@ -35,8 +35,8 @@ fn rename(cmd: Vec<String>) -> Result<String, String> {
     }
 
     match fs::rename(&cmd[2], &cmd[3]) {
-        Ok(_) => return Ok("".to_string()),
-        Err(_) => return Err(format!("Could not rename file \"{}\"", cmd[2])),
+        Ok(_) => Ok("".to_string()),
+        Err(_) => Err(format!("Could not rename file \"{}\"", cmd[2])),
     }
 }
 
@@ -46,8 +46,8 @@ fn delete(cmd: Vec<String>) -> Result<String, String> {
     }
 
     match fs::remove_file(&cmd[2]) {
-        Ok(_) => return Ok("".to_string()),
-        Err(_) => return Err(format!("Could not delete file \"{}\"", cmd[2])),
+        Ok(_) => Ok("".to_string()),
+        Err(_) => Err(format!("Could not delete file \"{}\"", cmd[2])),
     }
 }
 
@@ -64,7 +64,7 @@ fn read(cmd: Vec<String>) -> Result<String, String> {
     let mut contents = String::new();
     file.read_to_string(&mut contents).unwrap();
 
-    return Ok(contents);
+    Ok(contents)
 }
 
 fn write(cmd: Vec<String>) -> Result<String, String> {
@@ -82,7 +82,7 @@ fn write(cmd: Vec<String>) -> Result<String, String> {
         Err(_) => return Err(format!("File \"{}\" cannot be edited", cmd[2])),
     };
 
-    return Ok("".to_string());
+    Ok("".to_string())
 }
 
 fn append(cmd: Vec<String>) -> Result<String, String> {
@@ -100,7 +100,7 @@ fn append(cmd: Vec<String>) -> Result<String, String> {
         Err(_) => return Err(format!("File \"{}\" cannot be edited", cmd[2])),
     };
 
-    return Ok("".to_string());
+    Ok("".to_string())
 }
 
 fn edit(cmd: Vec<String>) -> Result<String, String> {
@@ -119,7 +119,7 @@ fn edit(cmd: Vec<String>) -> Result<String, String> {
     let mut contents = String::new();
     file.read_to_string(&mut contents).unwrap();
 
-    let mut lines = Vec::from_iter(contents.split("\n").map(String::from));
+    let mut lines = Vec::from_iter(contents.split('\n').map(String::from));
     let mut selected_line = 1;
     let mut print_after;
     let mut print_before;
@@ -128,15 +128,12 @@ fn edit(cmd: Vec<String>) -> Result<String, String> {
     loop {
         print!("\x1B[2J\x1B[1;1H"); // set output to top of terminal
 
-        if lines.len() != 0 {
+        if !lines.is_empty() {
             println!(
-                "{}",
-                format!(
-                    "Editing line {} of {} in file \"{}\"\n",
-                    selected_line,
-                    lines.len(),
-                    cmd[2]
-                )
+                "Editing line {} of {} in file \"{}\"",
+                selected_line,
+                lines.len(),
+                cmd[2]
             );
 
             if lines.len() - selected_line <= MAX_SURROUND_LINES {
@@ -168,7 +165,7 @@ fn edit(cmd: Vec<String>) -> Result<String, String> {
             println!("File is empty")
         }
 
-        println!("");
+        println!();
         user_input = file_edit_input();
 
         match user_input.as_str() {
@@ -183,7 +180,7 @@ fn edit(cmd: Vec<String>) -> Result<String, String> {
                 }
             }
             ":remove" | ":r" => {
-                if lines.len() != 0 {
+                if !lines.is_empty() {
                     lines.remove(selected_line - 1);
                     if selected_line > lines.len() {
                         selected_line -= 1;
@@ -211,7 +208,7 @@ fn edit(cmd: Vec<String>) -> Result<String, String> {
                 };
             }
             _ => {
-                if user_input.starts_with("\\") {
+                if user_input.starts_with('\\') {
                     user_input.remove(0);
                 }
                 lines[selected_line - 1] = user_input
@@ -219,7 +216,7 @@ fn edit(cmd: Vec<String>) -> Result<String, String> {
         }
     }
 
-    return Ok("".to_string());
+    Ok("".to_string())
 }
 
 fn file_edit_input() -> String {

@@ -11,14 +11,12 @@ pub fn cmd_main(cmd: Vec<String>) -> Result<String, String> {
         external_call = std::process::Command::new("powershell")
             .args(&cmd[1..])
             .output();
+    } else if cmd.len() > 3 {
+        external_call = std::process::Command::new(&cmd[1])
+            .args(&cmd[2..])
+            .output();
     } else {
-        if cmd.len() > 3 {
-            external_call = std::process::Command::new(cmd[1].to_string())
-                .args(&cmd[2..])
-                .output();
-        } else {
-            external_call = std::process::Command::new(cmd[1].to_string()).output();
-        }
+        external_call = std::process::Command::new(&cmd[1]).output();
     }
 
     let cmd_result = match external_call {
@@ -30,5 +28,5 @@ pub fn cmd_main(cmd: Vec<String>) -> Result<String, String> {
 
     let test = String::from_utf8(cmd_result.stdout).unwrap();
 
-    return Ok(test);
+    Ok(test)
 }

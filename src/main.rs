@@ -15,18 +15,18 @@ fn main() {
     'main: loop {
         cmds = input();
 
-        if cmds.len() == 0 {
+        if cmds.is_empty() {
             continue 'main;
         }
 
         for mut cmd in cmds {
-            for n in 0..cmd.len() {
-                if cmd[n] == "%str" {
-                    cmd[n] = pipe.to_string();
+            for part in &mut cmd {
+                if part == "%str" {
+                    *part = pipe.to_string();
                 }
             }
 
-            if cmd.len() == 0 {
+            if cmd.is_empty() {
                 continue 'main;
             } else {
                 match cmd[0].as_str() {
@@ -48,7 +48,7 @@ fn main() {
             pipe = match cmd_return {
                 Ok(value) => value,
                 Err(value) => {
-                    if value != "" {
+                    if !value.is_empty() {
                         println!("{}", value);
                     }
                     continue 'main;
@@ -74,7 +74,7 @@ fn input() -> Vec<Vec<String>> {
         .expect("Cannot read user inpt");
 
     user_input = user_input.trim().to_string();
-    return parser(user_input);
+    parser(user_input)
 }
 
 fn parser(cmd: String) -> Vec<Vec<String>> {
@@ -101,7 +101,7 @@ fn parser(cmd: String) -> Vec<Vec<String>> {
                         partial_cmd = "".to_string();
                     }
                     ' ' => {
-                        if partial_cmd.len() != 0 {
+                        if !partial_cmd.is_empty() {
                             single_cmd.push(partial_cmd.trim().to_string());
                             partial_cmd = "".to_string();
                         }
@@ -114,19 +114,17 @@ fn parser(cmd: String) -> Vec<Vec<String>> {
                 partial_cmd.push(char);
                 previous_backslash = false;
             }
+        } else if char == '"' {
+            quotation = false;
         } else {
-            if char == '"' {
-                quotation = false;
-            } else {
-                partial_cmd.push(char);
-            }
+            partial_cmd.push(char);
         }
     }
 
-    if partial_cmd.len() != 0 {
+    if !partial_cmd.is_empty() {
         single_cmd.push(partial_cmd);
     }
-    if single_cmd.len() != 0 {
+    if !single_cmd.is_empty() {
         cmds.push(single_cmd);
     }
 

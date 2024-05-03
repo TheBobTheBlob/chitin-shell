@@ -4,18 +4,18 @@ pub fn cmd_main(cmd: Vec<String>) -> Result<String, String> {
     }
 
     match cmd[1].as_str() {
-        "add" | "subtract" | "multiply" | "divide" => return elementary(cmd),
-        "sin" | "cos" | "tan" => return trig(cmd),
-        "greater" | "less" | "equal" => return compare(cmd),
-        _ => return Err(format!("\"{}\" is not a valid subcommand for math", cmd[1])),
+        "add" | "subtract" | "multiply" | "divide" => elementary(cmd),
+        "sin" | "cos" | "tan" => trig(cmd),
+        "greater" | "less" | "equal" => compare(cmd),
+        _ => Err(format!("\"{}\" is not a valid subcommand for math", cmd[1])),
     }
 }
 
 fn str_to_float(num: &String) -> Result<f64, String> {
     match num.parse::<f64>() {
-        Ok(value) => return Ok(value),
-        Err(_) => return Err(format!("\"{}\" is not a valid number", num)),
-    };
+        Ok(value) => Ok(value),
+        Err(_) => Err(format!("\"{}\" is not a valid number", num)),
+    }
 }
 
 fn elementary(cmd: Vec<String>) -> Result<String, String> {
@@ -31,10 +31,10 @@ fn elementary(cmd: Vec<String>) -> Result<String, String> {
     }
 
     match cmd[1].as_str() {
-        "add" => return Ok((num1 + num2).to_string()),
-        "subtract" => return Ok((num1 + num2).to_string()),
-        "multiply" => return Ok((num1 + num2).to_string()),
-        "divide" => return Ok((num1 + num2).to_string()),
+        "add" => Ok((num1 + num2).to_string()),
+        "subtract" => Ok((num1 + num2).to_string()),
+        "multiply" => Ok((num1 + num2).to_string()),
+        "divide" => Ok((num1 + num2).to_string()),
         _ => unreachable!(),
     }
 }
@@ -50,20 +50,20 @@ fn trig(cmd: Vec<String>) -> Result<String, String> {
         "degree" => {
             let radians = (num * std::f64::consts::PI) / 180.0;
             match cmd[1].as_str() {
-                "sin" => return Ok(radians.sin().to_string()),
-                "cos" => return Ok(radians.cos().to_string()),
-                "tan" => return Ok(radians.tan().to_string()),
+                "sin" => Ok(radians.sin().to_string()),
+                "cos" => Ok(radians.cos().to_string()),
+                "tan" => Ok(radians.tan().to_string()),
                 _ => unreachable!(),
             }
         }
         "radian" => match cmd[1].as_str() {
-            "sin" => return Ok(num.sin().to_string()),
-            "cos" => return Ok(num.cos().to_string()),
-            "tan" => return Ok(num.tan().to_string()),
+            "sin" => Ok(num.sin().to_string()),
+            "cos" => Ok(num.cos().to_string()),
+            "tan" => Ok(num.tan().to_string()),
             _ => unreachable!(),
         },
         _ => {
-            return Err(format!(
+            Err(format!(
                 "\"math {}\" only supports \"degree\" and \"radian\"",
                 cmd[1]
             ))
@@ -82,23 +82,23 @@ fn compare(cmd: Vec<String>) -> Result<String, String> {
     match cmd[1].as_str() {
         "greater" => {
             if num1 > num2 {
-                return Ok("True".to_string());
+                Ok("True".to_string())
             } else {
-                return Ok("False".to_string());
+                Ok("False".to_string())
             }
         }
         "less" => {
             if num1 < num2 {
-                return Ok("True".to_string());
+                Ok("True".to_string())
             } else {
-                return Ok("False".to_string());
+                Ok("False".to_string())
             }
         }
         "equal" => {
             if num1 == num2 {
-                return Ok("True".to_string());
+                Ok("True".to_string())
             } else {
-                return Ok("False".to_string());
+                Ok("False".to_string())
             }
         }
         _ => unreachable!(),
