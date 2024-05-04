@@ -41,7 +41,7 @@ Multiple commands can be entered at once by splitting them up with the pipe `|` 
 Outputs are automatically saved, and can be accessed in following commands by `%[num]`, where `[num]` is an integer. The number starts at 1 and counts up for every output-producing command. Commands that don't have outputs do not affect this number. To pass the output of the previous command, use `%str`.
 
 ```console
-math add 5 7 | file create "math.txt" | math subtract 19 7  | math compare %1 %2
+math add 5 7 | file create "math.txt" | math subtract 19 7  | math equal %1 %2
 file read text.txt | string replace %str "1.0.0" "2.0.0"
 ```
 
