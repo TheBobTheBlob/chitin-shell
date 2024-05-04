@@ -32,9 +32,9 @@ fn elementary(cmd: Vec<String>) -> Result<String, String> {
 
     match cmd[1].as_str() {
         "add" => Ok((num1 + num2).to_string()),
-        "subtract" => Ok((num1 + num2).to_string()),
-        "multiply" => Ok((num1 + num2).to_string()),
-        "divide" => Ok((num1 + num2).to_string()),
+        "subtract" => Ok((num1 - num2).to_string()),
+        "multiply" => Ok((num1 * num2).to_string()),
+        "divide" => Ok((num1 / num2).to_string()),
         _ => unreachable!(),
     }
 }

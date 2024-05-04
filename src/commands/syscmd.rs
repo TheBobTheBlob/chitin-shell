@@ -6,25 +6,31 @@ pub fn cmd_main(cmd: Vec<String>) -> Result<String, String> {
         );
     }
 
-    let external_call: Result<std::process::Output, std::io::Error>;
+    let external_cmd: Result<std::process::Output, std::io::Error>;
+    let cmd_return: String;
+
     if cfg!(windows) {
-        external_call = std::process::Command::new("powershell")
+        external_cmd = std::process::Command::new("powershell")
             .args(&cmd[1..])
             .output();
     } else if cmd.len() > 3 {
-        external_call = std::process::Command::new(&cmd[1]).args(&cmd[2..]).output();
+        external_cmd = std::process::Command::new(&cmd[1]).args(&cmd[2..]).output();
     } else {
-        external_call = std::process::Command::new(&cmd[1]).output();
+        external_cmd = std::process::Command::new(&cmd[1]).output();
     }
 
-    let cmd_result = match external_call {
+    let external_return = match external_cmd {
         Ok(value) => value,
         Err(_) => {
             return Err(format!("\"{}\" is not a recognised system command", cmd[1]));
         }
     };
 
-    let test = String::from_utf8(cmd_result.stdout).unwrap();
+    if external_return.status.success() {
+        cmd_return = String::from_utf8(external_return.stdout).unwrap();
+    } else {
+        cmd_return = String::from_utf8(external_return.stderr).unwrap();
+    }
 
-    Ok(test)
+    Ok(cmd_return)
 }

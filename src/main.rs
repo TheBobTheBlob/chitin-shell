@@ -5,14 +5,16 @@ mod commands;
 
 fn main() {
     let mut cmds: Vec<Vec<String>>;
-    let mut pipe = String::new();
+    let mut last_output = String::new();
+    let mut previous_outputs: Vec<String> = Vec::new();
     let mut cmd_return: Result<String, String>;
 
     print!("\x1B[2J\x1B[1;1H"); // set output to top of terminal
 
-    println!("chitin shell: version 1.0.0\n");
+    println!("chitin shell: version {}\n", env!("CARGO_PKG_VERSION"));
 
     'main: loop {
+        previous_outputs.clear();
         cmds = input();
 
         if cmds.is_empty() {
@@ -22,7 +24,21 @@ fn main() {
         for mut cmd in cmds {
             for part in &mut cmd {
                 if part == "%str" {
-                    *part = pipe.to_string();
+                    *part = match previous_outputs.last() {
+                        Some(value) => value.to_string(),
+                        None => "%str".to_string(),
+                    }
+                } else if part.starts_with('%') {
+                    *part = match &part[1..].parse::<usize>() {
+                        Ok(value) => {
+                            if *value > previous_outputs.len() {
+                                part.to_string()
+                            } else {
+                                previous_outputs[*value - 1].to_string()
+                            }
+                        }
+                        Err(_) => part.to_string(),
+                    }
                 }
             }
 
@@ -45,8 +61,13 @@ fn main() {
                 }
             }
 
-            pipe = match cmd_return {
-                Ok(value) => value,
+            last_output = match cmd_return {
+                Ok(value) => {
+                    if !value.is_empty() {
+                        previous_outputs.push(value.to_string());
+                    }
+                    value.trim().to_string()
+                }
                 Err(value) => {
                     if !value.is_empty() {
                         println!("{}", value);
@@ -56,8 +77,8 @@ fn main() {
             };
         }
 
-        if pipe.trim() != "" {
-            println!("{}", pipe.trim());
+        if !last_output.is_empty() {
+            println!("{}", last_output);
         }
     }
 }

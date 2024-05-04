@@ -7,7 +7,7 @@ pub fn cmd_main(cmd: Vec<String>) -> Result<String, String> {
     }
 
     match cmd[1].as_str() {
-        "create" => Ok(create(cmd)),
+        "create" => create(cmd),
         "replace" => replace(cmd),
         "compare" => compare(cmd),
         "includes" => includes(cmd),
@@ -19,8 +19,12 @@ pub fn cmd_main(cmd: Vec<String>) -> Result<String, String> {
     }
 }
 
-fn create(cmd: Vec<String>) -> String {
-    cmd[2].to_string()
+fn create(cmd: Vec<String>) -> Result<String, String> {
+    if cmd.len() != 3 {
+        return Err("\"string create\" takes a parameters".to_string());
+    }
+
+    Ok(cmd[2].to_string())
 }
 
 fn replace(cmd: Vec<String>) -> Result<String, String> {
